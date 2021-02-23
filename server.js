@@ -19,7 +19,7 @@ conn.once('open', function(){
 app.use('/user', userRouter);
 app.use('/question', questionRouter)
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3001;
 app.listen(port,function(){
     console.log('Server running on port: '+port);
 });

@@ -13,7 +13,7 @@ app.use(express.json());
 mongoose.connect(uriString,{useNewUrlParser:true, useCreateIndex: true, useUnifiedTopology: true});
 const conn = mongoose.connection;
 conn.once('open', function(){
-    console.log("MongoDB connected");
+    console.log("MongoDB connected successfully");
 });
 
 app.use('/user', userRouter);

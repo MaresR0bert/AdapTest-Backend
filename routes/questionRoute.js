@@ -15,21 +15,21 @@ router.route('/:id').delete((req,res)=>{
 });
 
 router.route('/add').post((req,res)=>{
-    const body = req.body.body;
-    const answer = req.body.answer;
-    const fakes = req.body.fakes;
+    const questionBody = req.body.questionBody;
+    const rightAnswers = req.body.rightAnswers;
+    const wrongAnswers = req.body.wrongAnswers;
     const difficulty = Number(req.body.difficulty);
     const username = req.body.username;
 
-    const newQuestion = new Question({body,answer,fakes,difficulty,username});
+    const newQuestion = new Question({questionBody,rightAnswers,wrongAnswers,difficulty,username});
     newQuestion.save().then(()=>res.json('Question added')).catch(err=>res.status(400).json('Err: '+err));
 });
 
 router.route('/update/:id').put((req,res)=>{
     Question.findById(req.params.id).then(question => {
-        question.body = req.body.body;
-        question.answer = req.body.answer;
-        question.fakes = req.body.fakes;
+        question.questionBody = req.body.questionBody;
+        question.rightAnswers = req.body.rightAnswers;
+        question.wrongAnswers = req.body.wrongAnswers;
         question.difficulty = Number(req.body.difficulty);
         question.username = req.body.username;
 

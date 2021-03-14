@@ -2,12 +2,30 @@ import express from 'express';
 import Question from '../schemas/questionSchema.js'
 
 let router = express.Router();
-router.route('/').get((req,res)=>{
-    Question.find().then(users=> res.json(users)).catch(err => res.status(400).json('Err: '+err));
+
+function mergeAnswers(questions){
+    return questions.map(question =>{
+        let answers = question.wrongAnswers + "," +question.rightAnswers
+        return {
+            "_id":question._id,
+            "questionBody":question.questionBody,
+            "answers":answers,
+            "difficulty":question.difficulty,
+            "username":question.username
+        }
+    })
+}
+
+router.route('/implicitanswers/').get((req,res)=>{
+    Question.find().then(questions=> res.json(mergeAnswers(questions))).catch(err => res.status(400).json('Err: '+err));
+});
+
+router.route('/explicitanswers/').get((req,res)=>{
+    Question.find().then(questions=> res.json(questions)).catch(err => res.status(400).json('Err: '+err));
 });
 
 router.route('/:id').get((req,res)=>{
-    Question.findById(req.params.id).then(users=> res.json(users)).catch(err => res.status(400).json('Err: '+err));
+    Question.findById(req.params.id).then(questions=> res.json(questions)).catch(err => res.status(400).json('Err: '+err));
 });
 
 router.route('/:id').delete((req,res)=>{

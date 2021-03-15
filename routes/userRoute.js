@@ -9,7 +9,8 @@ router.route('/').get((req,res)=>{
 router.route('/add').post((req,res)=>{
     const username = req.body.username;
     const password = req.body.password;
-    const newUser = new User({username,password});
+    const role = req.body.role;
+    const newUser = new User({username,password,role});
     newUser.save().then(()=>res.json('User added')).catch(err=>res.status(400).json('Err: '+err));
 });
 

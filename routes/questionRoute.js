@@ -32,6 +32,13 @@ router.route('/:id').delete((req,res)=>{
     Question.findByIdAndDelete(req.params.id).then(()=>res.json('Question deleted')).catch(err => res.status(400).json('Err: '+err));
 });
 
+router.route('/check/:id/:answer').get((req,res)=>{
+    Question.findById(req.params.id).then(question=>{
+        if(question.rightAnswers === req.params.answer) res.json('Correct');
+        else res.json('Wrong');
+    }).catch(err=>res.status(400).json('Err: '+err));
+})
+
 router.route('/add').post((req,res)=>{
     const questionBody = req.body.questionBody;
     const rightAnswers = req.body.rightAnswers;

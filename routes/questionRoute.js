@@ -3,9 +3,9 @@ import Question from '../schemas/questionSchema.js'
 
 let router = express.Router();
 
-function mergeAnswers(questions){
+function mergeAnswersArrays(questions){
     return questions.map(question =>{
-        let answers = question.wrongAnswers + "," +question.rightAnswers
+        let answers = question.rightAnswers.concat(question.wrongAnswers);
         return {
             "_id":question._id,
             "questionBody":question.questionBody,
@@ -16,8 +16,19 @@ function mergeAnswers(questions){
     })
 }
 
+function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+  
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
 router.route('/implicitanswers/').get((req,res)=>{
-    Question.find().then(questions=> res.json(mergeAnswers(questions))).catch(err => res.status(400).json('Err: '+err));
+    Question.find().then(questions=> res.json(mergeAnswersArrays(questions))).catch(err => res.status(400).json('Err: '+err));
 });
 
 router.route('/explicitanswers/').get((req,res)=>{
@@ -34,7 +45,7 @@ router.route('/:id').delete((req,res)=>{
 
 router.route('/check/:id/').post((req,res)=>{
     Question.findById(req.params.id).then(question=>{
-        if(question.rightAnswers === req.body.answer) res.json('Correct');
+        if(arraysEqual(question.rightAnswers,req.body.answer)) res.json('Correct');
         else res.json('Wrong');
     }).catch(err=>res.status(400).json('Err: '+err));
 })

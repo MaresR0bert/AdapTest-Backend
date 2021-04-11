@@ -18,4 +18,11 @@ router.route('/:id').delete((req,res)=>{
     User.findByIdAndDelete(req.params.id).then(()=> res.json('User deleted')).catch(err => res.status(400).json('Err: '+err));
 });
 
+router.route('/login').post((req,res)=>{
+    User.find({username:req.body.username}).then(user =>{
+        if(user[0].password === req.body.password) res.json('Authentication successful')
+        else res.json('Authentication failed')
+    }).catch(err=> res.status(400).json('Err: '+err))
+})
+
 export default router;

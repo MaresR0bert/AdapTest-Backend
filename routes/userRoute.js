@@ -20,7 +20,7 @@ router.route('/:id').delete((req,res)=>{
 
 router.route('/login').post((req,res)=>{
     User.find({username:req.body.username}).then(user =>{
-        if(user[0].password === req.body.password) res.json('Authentication successful')
+        if(user[0].password === req.body.password) res.json(user[0].role)
         else res.json('Authentication failed')
     }).catch(err=> res.status(400).json('Err: '+err))
 })

@@ -31,9 +31,13 @@ router.route('/implicitanswers/').get((req,res)=>{
     Question.find().then(questions=> res.json(mergeAnswersArrays(questions))).catch(err => res.status(400).json('Err: '+err));
 });
 
+router.route('/explicitanswersofuser/:name/').get((req,res)=>{
+    Question.find({username:req.params.name}).then(questions=> res.json(questions)).catch(err => res.status(400).json('Err: '+err));
+});
+
 router.route('/explicitanswers/').get((req,res)=>{
     Question.find().then(questions=> res.json(questions)).catch(err => res.status(400).json('Err: '+err));
-});
+}); //no use
 
 router.route('/:id').get((req,res)=>{
     Question.findById(req.params.id).then(questions=> res.json(questions)).catch(err => res.status(400).json('Err: '+err));

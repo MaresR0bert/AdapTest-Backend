@@ -3,8 +3,10 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const tempLogSchema = new Schema({
     username:{type:String, required:true, unique:true},
-    questionArray:{type:Array, required:false},
-    answers:{type:Array, required:false},
+    roomCode:{type:String, required:true},
+    questionArrayRemaining:{type:Array, required:false},
+    questionArrayDone:{type:Array, required:false},
+    givenAnswers:{type:Array, required:false},
     score:{type:Number, required:false},
 },{
     timestamps:true

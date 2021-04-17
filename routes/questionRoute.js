@@ -3,13 +3,27 @@ import Question from '../schemas/questionSchema.js'
 
 let router = express.Router();
 
+function shuffle(array) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+
 function mergeAnswersArrays(questions) {
     return questions.map(question => {
         let answers = question.rightAnswers.concat(question.wrongAnswers);
         return {
             "_id": question._id,
             "questionBody": question.questionBody,
-            "answers": answers,
+            "answers": shuffle(question.rightAnswers.concat(question.wrongAnswers)),
             "difficulty": question.difficulty,
             "username": question.username
         }

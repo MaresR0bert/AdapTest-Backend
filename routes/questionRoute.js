@@ -19,7 +19,6 @@ function shuffle(array) {
 
 function mergeAnswersArrays(questions) {
     return questions.map(question => {
-        let answers = question.rightAnswers.concat(question.wrongAnswers);
         return {
             "_id": question._id,
             "questionBody": question.questionBody,
@@ -28,6 +27,20 @@ function mergeAnswersArrays(questions) {
             "username": question.username
         }
     })
+}
+
+function mergeAnswersOfMultipleQuestions(questions){
+    let mergedQuestionsArray = [];
+    for(let i of questions){
+        mergedQuestionsArray.push({
+            "_id":i._id,
+            "questionBody":i.questionBody,
+            "answers": shuffle(i.rightAnswers.concat(i.wrongAnswers)),
+            "difficulty":i.difficulty,
+            "username":i.username
+        })
+    }
+    return mergedQuestionsArray
 }
 
 function arraysEqual(a, b) {
@@ -57,9 +70,15 @@ router.route('/explicitanswers/').get((req, res) => {
     Question.find().then(questions => res.json(questions)).catch(err => res.status(400).json('Err: ' + err));
 }); //no use
 
-router.route('/:id').get((req, res) => {
+router.route('/getbyid/:id').get((req, res) => {
     Question.findById(req.params.id).then(questions => res.json(questions)).catch(err => res.status(400).json('Err: ' + err));
 });
+
+router.route('/getbymanyids/').post((req,res)=>{
+    //Question.findById(req.body.ids).then(questions => res.json(questions)).catch(err => res.status(400).json('Err: ' + err));
+    const ids = req.body.ids
+    Question.find().where('_id').in(ids).exec().then(questions => res.json(mergeAnswersOfMultipleQuestions(questions))).catch(err => res.status(400).json('Err: '+ err));
+})
 
 router.route('/:id').delete((req, res) => {
     Question.findByIdAndDelete(req.params.id).then(() => res.json('Question deleted')).catch(err => res.status(400).json('Err: ' + err));

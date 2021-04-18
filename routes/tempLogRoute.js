@@ -7,6 +7,10 @@ router.route('/').get((req, res) => {
     TempLog.find().then(tempLog => res.json(tempLog)).catch(err => res.status(400).json('Err: ' + err));
 }); //no use
 
+router.route('/getbyname/:studname').get((req, res) => {
+    TempLog.find({username:req.params.studname}).then(tempLog => tempLog.length?res.json(tempLog[0]):res.json(false)).catch(err => res.status(400).json('Err: ' + err));
+}); 
+
 router.route('/add').post((req, res) => {
     const username = req.body.username;
     const roomCode = req.body.roomCode;

@@ -24,20 +24,22 @@ function mergeAnswersArrays(questions) {
             "questionBody": question.questionBody,
             "answers": shuffle(question.rightAnswers.concat(question.wrongAnswers)),
             "difficulty": question.difficulty,
-            "username": question.username
+            "username": question.username,
+            "isMultiAnswer": question.rightAnswers.length > 1 ? true : false
         }
     })
 }
 
-function mergeAnswersOfMultipleQuestions(questions){
+function mergeAnswersOfMultipleQuestions(questions) {
     let mergedQuestionsArray = [];
-    for(let i of questions){
+    for (let i of questions) {
         mergedQuestionsArray.push({
-            "_id":i._id,
-            "questionBody":i.questionBody,
+            "_id": i._id,
+            "questionBody": i.questionBody,
             "answers": shuffle(i.rightAnswers.concat(i.wrongAnswers)),
-            "difficulty":i.difficulty,
-            "username":i.username
+            "difficulty": i.difficulty,
+            "username": i.username,
+            "isMultiAnswer": i.rightAnswers.length > 1 ? true : false
         })
     }
     return mergedQuestionsArray
@@ -47,6 +49,8 @@ function arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
     if (a.length !== b.length) return false;
+    a = a.sort();
+    b = b.sort();
 
     for (var i = 0; i < a.length; ++i) {
         if (a[i] !== b[i]) return false;
@@ -60,7 +64,7 @@ router.route('/implicitanswersofuser/:name').get((req, res) => {
 
 router.route('/implicitanswers/').get((req, res) => {
     Question.find().then(questions => res.json(mergeAnswersArrays(questions))).catch(err => res.status(400).json('Err: ' + err));
-});
+}); //no use
 
 router.route('/explicitanswersofuser/:name/').get((req, res) => {
     Question.find({ username: req.params.name }).then(questions => res.json(questions)).catch(err => res.status(400).json('Err: ' + err));
@@ -74,10 +78,8 @@ router.route('/getbyid/:id').get((req, res) => {
     Question.findById(req.params.id).then(questions => res.json(questions)).catch(err => res.status(400).json('Err: ' + err));
 });
 
-router.route('/getbymanyids/').post((req,res)=>{
-    //Question.findById(req.body.ids).then(questions => res.json(questions)).catch(err => res.status(400).json('Err: ' + err));
-    const ids = req.body.ids
-    Question.find().where('_id').in(ids).exec().then(questions => res.json(mergeAnswersOfMultipleQuestions(questions))).catch(err => res.status(400).json('Err: '+ err));
+router.route('/getbymanyids/').post((req, res) => {
+    Question.find().where('_id').in(req.body.ids).exec().then(questions => res.json(mergeAnswersOfMultipleQuestions(questions))).catch(err => res.status(400).json('Err: ' + err));
 })
 
 router.route('/:id').delete((req, res) => {

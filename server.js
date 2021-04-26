@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import userRouter from './routes/userRoute.js';
 import questionRouter from './routes/questionRoute.js';
 import tempLogRoute from './routes/tempLogRoute.js'
+import testLogRoute from './routes/testLogRoute.js'
 const uriString = "mongodb+srv://SJUs0tV8tEBrpUEE:N6UpA9YEt9JTtQTb@atplaform.k0xbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 const app = express();
@@ -20,6 +21,7 @@ conn.once('open', function(){
 app.use('/user', userRouter);
 app.use('/question', questionRouter);
 app.use('/templog', tempLogRoute);
+app.use('/testlog',testLogRoute);
 
 const port = process.env.PORT || 3001;
 app.listen(port,function(){

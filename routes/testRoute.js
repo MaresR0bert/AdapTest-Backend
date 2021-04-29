@@ -7,6 +7,10 @@ router.route('/getbyroomcode/:roomcode').get((req, res) => {
     Test.find({roomCode:req.params.roomcode}).then(test => test.length?res.json(test):res.json(false)).catch(err => res.status(400).json('Err: ' + err));
 }); 
 
+router.route('/getbyname/:username').get((req, res) => {
+    Test.find({teacher:req.params.username}).then(test => test.length?res.json(test):res.json(false)).catch(err => res.status(400).json('Err: ' + err));
+}); 
+
 router.route('/add').post((req, res) => {
     const roomCode = req.body.roomCode;
     const questionArray = req.body.questionArray;

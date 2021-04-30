@@ -4,7 +4,7 @@ import Test from '../schemas/testSchema.js'
 let router = express.Router();
 
 router.route('/getbyroomcode/:roomcode').get((req, res) => {
-    Test.find({roomCode:req.params.roomcode}).then(test => test.length?res.json(test):res.json(false)).catch(err => res.status(400).json('Err: ' + err));
+    Test.find({roomCode:req.params.roomcode}).then(test => test.length?res.json(test[0]):res.json(false)).catch(err => res.status(400).json('Err: ' + err));
 }); 
 
 router.route('/getbyname/:username').get((req, res) => {

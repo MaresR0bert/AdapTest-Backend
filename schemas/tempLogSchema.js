@@ -8,6 +8,7 @@ const tempLogSchema = new Schema({
     questionArrayDone:{type:Array, required:false},
     givenAnswers:{type:Array, required:false},
     score:{type:Number, required:false},
+    teacher:{type:String, required:true}
 },{
     timestamps:true
 });

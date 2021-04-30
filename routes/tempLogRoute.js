@@ -18,7 +18,8 @@ router.route('/add').post((req, res) => {
     const questionArrayDone = req.body.questionArrayDone;
     const givenAnswers = req.body.givenAnswers;
     const score = Number(req.body.score);
-    const newTempLog = new TempLog({ username, roomCode, questionArrayRemaining, questionArrayDone, givenAnswers, score });
+    const teacher = req.body.teacher;
+    const newTempLog = new TempLog({ username, roomCode, questionArrayRemaining, questionArrayDone, givenAnswers, score, teacher });
     newTempLog.save().then(() => res.json('TempLog added')).catch(err => res.status(400).json('Err: ' + err));
 });
 

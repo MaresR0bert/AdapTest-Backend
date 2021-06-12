@@ -6,7 +6,7 @@ const testLogSchema = new Schema({
     roomCode: { type: String, required: true },
     questionArray: { type: Array, required: true },
     givenAnswers: { type: Array, required: true },
-    score: { type: Number, required: true },
+    score: { type: Array, required: true },
     teacher: { type: String, required: true }
 }, {
     timestamps: true

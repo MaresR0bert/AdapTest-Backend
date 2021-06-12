@@ -12,7 +12,7 @@ router.route('/add').post((req, res) => {
     const roomCode = req.body.roomCode;
     const questionArray = req.body.questionArray;
     const givenAnswers = req.body.givenAnswers;
-    const score = Number(req.body.score);
+    const score = req.body.score;
     const teacher = req.body.teacher;
     const newTestLog = new TestLog({ student, roomCode, questionArray, givenAnswers, score, teacher });
     newTestLog.save().then(() => res.json('TestLog added')).catch(err => res.status(400).json('Err: ' + err));

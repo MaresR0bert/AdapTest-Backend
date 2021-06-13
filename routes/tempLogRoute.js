@@ -19,7 +19,8 @@ router.route('/add').post((req, res) => {
     const givenAnswers = req.body.givenAnswers;
     const score = req.body.score
     const teacher = req.body.teacher;
-    const newTempLog = new TempLog({ username, roomCode, questionArrayRemaining, questionArrayDone, givenAnswers, score, teacher });
+    const ascending = req.body.ascending;
+    const newTempLog = new TempLog({ username, roomCode, questionArrayRemaining, questionArrayDone, givenAnswers, score, teacher, ascending });
     newTempLog.save().then(() => res.json('TempLog added')).catch(err => res.status(400).json('Err: ' + err));
 });
 
@@ -37,6 +38,7 @@ router.route('/updatebyid/:id').put((req, res) => {
         tempLog.questionArrayDone = req.body.questionArrayDone;
         tempLog.givenAnswers = req.body.givenAnswers;
         tempLog.score = req.body.score;
+        tempLog.ascending = req.body.ascending;
 
         tempLog.save().then(() => res.json('TempLog updated')).catch(err => res.status(400).json('Err: ' + err));
     }).catch(err => res.status(400).json('Err: ' + err));
@@ -48,6 +50,7 @@ router.route('/updatebyname/:studname').put((req, res) => {
         tempLog[0].questionArrayDone = req.body.questionArrayDone;
         tempLog[0].givenAnswers = req.body.givenAnswers;
         tempLog[0].score = req.body.score;
+        tempLog[0].ascending = req.body.ascending;
 
         tempLog[0].save().then(() => res.json('TempLog updated')).catch(err => res.status(400).json('Err: ' + err));
     }).catch(err => res.status(400).json('Err: ' + err));

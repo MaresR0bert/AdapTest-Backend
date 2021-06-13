@@ -8,7 +8,8 @@ const tempLogSchema = new Schema({
     questionArrayDone: { type: Array, required: false },
     givenAnswers: { type: Array, required: false },
     score: { type: Array, required: false },
-    teacher: { type: String, required: true }
+    teacher: { type: String, required: true },
+    ascending: { type: Boolean, required: false}
 }, {
     timestamps: true
 });

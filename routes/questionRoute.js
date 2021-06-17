@@ -116,4 +116,31 @@ router.route('/update/:id').put((req, res) => {
     }).catch(err => res.status(400).json('Err: ' + err));
 });
 
+router.route('/getoptimal/').post((req, res) => {
+    let currentQuestion;
+    Question.findById(req.body.lastQuestion).then(q => {
+        currentQuestion = q;
+    }).catch(err => res.status(400).json("Cant find current quesiton! Err: "+err));
+
+    Question.find().where('_id').in(req.body.questionArrayRemaining).exec().then(questions => {
+        if(req.body.scoreArray.length > 0){
+            let adjustedQuestionArray;
+            
+            let iter = 0;
+            do{
+                iter++;
+                adjustedQuestionArray = req.body.isAscending ? questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] + iter) : questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] - iter);
+            }while(!adjustedQuestionArray.length && iter < 10)
+
+            if(adjustedQuestionArray.length > 1){
+                res.json(adjustedQuestionArray[0]._id);
+            }else if(adjustedQuestionArray.length === 1){
+                res.json(adjustedQuestionArray[0]._id); // return just the id
+            }else if(!adjustedQuestionArray.length){
+                res.json("no question found");
+            }
+        }
+    }).catch(err => res.status(400).json("Cant find remaining quesitons! Err: "+err));
+})
+
 export default router;

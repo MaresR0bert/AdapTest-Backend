@@ -131,7 +131,7 @@ router.route('/getoptimal/').post((req, res) => {
             do{
                 iter++;
                 adjustedQuestionArray = req.body.isAscending ? questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] + iter) : questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] - iter);
-            }while(!adjustedQuestionArray.length && iter < 2)
+            }while(!adjustedQuestionArray.length && iter < 1)
 
             if(adjustedQuestionArray.length > 1){
                 res.json(adjustedQuestionArray[0]._id);

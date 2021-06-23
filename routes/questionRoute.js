@@ -118,27 +118,41 @@ router.route('/update/:id').put((req, res) => {
 
 router.route('/getoptimal/').post((req, res) => {
     let currentQuestion;
-    Question.findById(req.body.lastQuestion).then(q => {
-        currentQuestion = q;
-    }).catch(err => res.status(400).json("Cant find current quesiton! Err: "+err));
-
+    if(req.body.lastQuestion){
+        Question.findById(req.body.lastQuestion).then(q => {
+            currentQuestion = q;
+        }).catch(err => res.status(400).json("Cant find current quesiton! Err: "+err));    
+    }
+    
     Question.find().where('_id').in(req.body.questionArrayRemaining).exec().then(questions => {
+        let adjustedQuestionArray;
         if(req.body.scoreArray.length > 0){
-            let adjustedQuestionArray;
-            
             let iter = 0;
             do{
                 iter++;
                 adjustedQuestionArray = req.body.isAscending ? questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] + iter) : questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] - iter);
-            }while(!adjustedQuestionArray.length && iter < 10)
+            }while(!adjustedQuestionArray.length && iter < 2)
 
             if(adjustedQuestionArray.length > 1){
                 res.json(adjustedQuestionArray[0]._id);
+                //to do category thingy
             }else if(adjustedQuestionArray.length === 1){
-                res.json(adjustedQuestionArray[0]._id); // return just the id
+                res.json(adjustedQuestionArray[0]._id);
             }else if(!adjustedQuestionArray.length){
-                res.json("no question found");
+                adjustedQuestionArray = questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1]);
+                if(!adjustedQuestionArray.length){
+                    res.json(false);
+                }else if(adjustedQuestionArray.length > 1){
+                    res.json(adjustedQuestionArray[0]._id);
+                    //to do category thingy
+                } else if(adjustedQuestionArray.length === 1){
+                    res.json(adjustedQuestionArray[0]._id);
+                }
+                
             }
+        } else {
+            adjustedQuestionArray = questions.filter(q => q.difficulty === 5);
+            res.json(adjustedQuestionArray[0]._id);
         }
     }).catch(err => res.status(400).json("Cant find remaining quesitons! Err: "+err));
 })

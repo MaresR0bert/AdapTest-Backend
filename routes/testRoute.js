@@ -10,7 +10,7 @@ router.route('/getbyroomcode/:roomcode').get((req, res) => {
 router.route('/getallroomcodes/').get((req,res)=>{
     Test.find().then(tests => tests.length?res.json(tests.map(t =>{
         return t.roomCode
-    })):res.json(false)).catch(err => res.status(400).json('Err: ' + err));
+    })):res.json([])).catch(err => res.status(400).json('Err: ' + err));
 })
 
 router.route('/getbyname/:username').get((req, res) => {

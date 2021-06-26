@@ -1,5 +1,6 @@
 import express from 'express';
-import TestLog from '../schemas/testlogSchema.js'
+import TestLog from '../schemas/testlogSchema.js';
+import Question from '../schemas/questionSchema.js'
 
 let router = express.Router();
 
@@ -21,5 +22,17 @@ router.route('/add').post((req, res) => {
 router.route('/:id').delete((req, res) => {
     TestLog.findByIdAndDelete(req.params.id).then(() => res.json('TestLog deleted')).catch(err => res.status(400).json('Err: ' + err));
 });
+
+router.route('/getallquestionsbyname/:studname').get((req, res) => {
+    TestLog.find({student:req.params.studname}).then(testLog =>{
+        let mergedFilledQuestionsArray = []
+        for(let i of testLog){
+            mergedFilledQuestionsArray = mergedFilledQuestionsArray.concat(i.questionArray);
+        }
+        Question.find().where('_id').in(mergedFilledQuestionsArray).exec().then(questions => {
+            return res.json(questions)
+        }).catch(err => res.status(400).json('Err: ' + err))
+    }).catch(err => res.status(400).json('Err: ' + err));
+}); 
 
 export default router;

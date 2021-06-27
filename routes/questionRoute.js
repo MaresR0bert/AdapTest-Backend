@@ -151,7 +151,20 @@ router.route('/getoptimal/').post((req, res) => {
                 
             }
         } else {
-            adjustedQuestionArray = questions.filter(q => q.difficulty === 5);
+            let iter = 0;
+            do{
+                adjustedQuestionArray = questions.filter(q => q.difficulty === 5 - iter);
+                iter++;
+            }while(!adjustedQuestionArray.length && iter < 5)
+
+            if(!adjustedQuestionArray.length){
+                iter = 0;
+                do{
+                    adjustedQuestionArray = questions.filter(q => q.difficulty === 5 + iter);
+                    iter++;
+                }while(!adjustedQuestionArray.length && iter < 6)
+            }
+            
             res.json(adjustedQuestionArray[0]._id);
         }
     }).catch(err => res.status(400).json("Cant find remaining quesitons! Err: "+err));

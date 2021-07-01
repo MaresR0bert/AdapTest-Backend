@@ -25,7 +25,10 @@ function mergeAnswersArrays(questions) {
             "answers": shuffle(question.rightAnswers.concat(question.wrongAnswers)),
             "difficulty": question.difficulty,
             "username": question.username,
-            "isMultiAnswer": question.rightAnswers.length > 1 ? true : false
+            "isMultiAnswer": question.rightAnswers.length > 1 ? true : false,
+            "questionCode": question.questionCode,
+            "questionProgLang":question.questionProgLang,
+            "questionCategory":question.questionCategory
         }
     })
 }
@@ -39,7 +42,10 @@ function mergeAnswersOfMultipleQuestions(questions) {
             "answers": shuffle(i.rightAnswers.concat(i.wrongAnswers)),
             "difficulty": i.difficulty,
             "username": i.username,
-            "isMultiAnswer": i.rightAnswers.length > 1 ? true : false
+            "isMultiAnswer": i.rightAnswers.length > 1 ? true : false,
+            "questionCode": i.questionCode,
+            "questionProgLang":i.questionProgLang,
+            "questionCategory":i.questionCategory
         })
     }
     return mergedQuestionsArray
@@ -99,8 +105,11 @@ router.route('/add').post((req, res) => {
     const wrongAnswers = req.body.wrongAnswers;
     const difficulty = Number(req.body.difficulty);
     const username = req.body.username;
+    const questionCode = req.body.questionCode;
+    const questionProgLang = req.body.questionProgLang;
+    const questionCategory = req.body.questionCategory
 
-    const newQuestion = new Question({ questionBody, rightAnswers, wrongAnswers, difficulty, username });
+    const newQuestion = new Question({ questionBody, rightAnswers, wrongAnswers, difficulty, username, questionCode, questionProgLang, questionCategory });
     newQuestion.save().then(() => res.json('Question added')).catch(err => res.status(400).json('Err: ' + err));
 });
 
@@ -111,6 +120,9 @@ router.route('/update/:id').put((req, res) => {
         question.wrongAnswers = req.body.wrongAnswers;
         question.difficulty = Number(req.body.difficulty);
         question.username = req.body.username;
+        question.questionCode = req.body.questionCode;
+        question.questionProgLang = req.body.questionProgLang;
+        question.questionCategory = req.body.questionCategory;
 
         question.save().then(() => res.json('Question updated')).catch(err => res.status(400).json('Err: ' + err));
     }).catch(err => res.status(400).json('Err: ' + err));

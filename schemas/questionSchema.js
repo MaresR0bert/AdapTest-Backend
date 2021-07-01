@@ -6,7 +6,10 @@ const questionSchema = new Schema({
     rightAnswers:{type:Array, required:true},
     wrongAnswers:{type:Array, required:true},
     difficulty:{type:Number, required:true},
-    username:{type:String, required:true}
+    username:{type:String, required:true},
+    questionCode:{type:String, required:false},
+    questionProgLang:{type:String, required:false},
+    questionCategory:{type:String, required:false}
 },{
     timestamps:true
 });

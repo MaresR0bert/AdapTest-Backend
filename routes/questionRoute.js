@@ -27,8 +27,8 @@ function mergeAnswersArrays(questions) {
             "username": question.username,
             "isMultiAnswer": question.rightAnswers.length > 1 ? true : false,
             "questionCode": question.questionCode,
-            "questionProgLang":question.questionProgLang,
-            "questionCategory":question.questionCategory
+            "questionProgLang": question.questionProgLang,
+            "questionCategory": question.questionCategory
         }
     })
 }
@@ -44,8 +44,8 @@ function mergeAnswersOfMultipleQuestions(questions) {
             "username": i.username,
             "isMultiAnswer": i.rightAnswers.length > 1 ? true : false,
             "questionCode": i.questionCode,
-            "questionProgLang":i.questionProgLang,
-            "questionCategory":i.questionCategory
+            "questionProgLang": i.questionProgLang,
+            "questionCategory": i.questionCategory
         })
     }
     return mergedQuestionsArray
@@ -130,56 +130,84 @@ router.route('/update/:id').put((req, res) => {
 
 router.route('/getoptimal/').post((req, res) => {
     let currentQuestion;
-    if(req.body.lastQuestion){
+    if (req.body.lastQuestion) {
         Question.findById(req.body.lastQuestion).then(q => {
             currentQuestion = q;
-        }).catch(err => res.status(400).json("Cant find current quesiton! Err: "+err));    
-    }
-    
-    Question.find().where('_id').in(req.body.questionArrayRemaining).exec().then(questions => {
-        let adjustedQuestionArray;
-        if(req.body.scoreArray.length > 0){
-            let iter = 0;
-            do{
-                iter++;
-                adjustedQuestionArray = req.body.isAscending ? questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] + iter) : questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] - iter);
-            }while(!adjustedQuestionArray.length && iter < 1)
+            Question.find().where('_id').in(req.body.questionArrayRemaining).exec().then(questions => {
+                let adjustedQuestionArray;
+                if (req.body.scoreArray.length > 0) {
+                    let iter = 0;
+                    do {
+                        iter++;
+                        adjustedQuestionArray = req.body.isAscending ? questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] + iter) : questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1] - iter);
+                    } while (!adjustedQuestionArray.length && iter < 1)
 
-            if(adjustedQuestionArray.length > 1){
-                res.json(adjustedQuestionArray[0]._id);
-                //to do category thingy
-            }else if(adjustedQuestionArray.length === 1){
-                res.json(adjustedQuestionArray[0]._id);
-            }else if(!adjustedQuestionArray.length){
-                adjustedQuestionArray = questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1]);
-                if(!adjustedQuestionArray.length){
-                    res.json(false);
-                }else if(adjustedQuestionArray.length > 1){
-                    res.json(adjustedQuestionArray[0]._id);
-                    //to do category thingy
-                } else if(adjustedQuestionArray.length === 1){
+                    if (adjustedQuestionArray.length > 1) {
+                        //to do category thingy
+                        let adjustedQuestionArrayByCategory = req.body.isAscending ? adjustedQuestionArray.filter(q => q.questionCategory === currentQuestion.questionCategory) : adjustedQuestionArray.filter(q => q.questionCategory !== currentQuestion.questionCategory);
+                        if (adjustedQuestionArrayByCategory.length) {
+                            res.json(adjustedQuestionArrayByCategory[0]._id);
+                        } else {
+                            res.json(adjustedQuestionArray[0]._id);
+                        }
+                    } else if (adjustedQuestionArray.length === 1) {
+                        res.json(adjustedQuestionArray[0]._id);
+                    } else if (!adjustedQuestionArray.length) {
+                        adjustedQuestionArray = questions.filter(q => q.difficulty === req.body.scoreArray[req.body.scoreArray.length - 1]);
+                        if (!adjustedQuestionArray.length) {
+                            res.json(false);
+                        } else if (adjustedQuestionArray.length > 1) {
+                            //to do category thingy
+                            let adjustedQuestionArrayByCategory = req.body.isAscending ? adjustedQuestionArray.filter(q => q.questionCategory === currentQuestion.questionCategory) : adjustedQuestionArray.filter(q => q.questionCategory !== currentQuestion.questionCategory);
+                            if (adjustedQuestionArrayByCategory.length) {
+                                res.json(adjustedQuestionArrayByCategory[0]._id);
+                            } else {
+                                res.json(adjustedQuestionArray[0]._id);
+                            }
+                        } else if (adjustedQuestionArray.length === 1) {
+                            res.json(adjustedQuestionArray[0]._id);
+                        }
+
+                    }
+                } else {
+                    let iter = 0;
+                    do {
+                        adjustedQuestionArray = questions.filter(q => q.difficulty === 5 - iter);
+                        iter++;
+                    } while (!adjustedQuestionArray.length && iter < 5)
+
+                    if (!adjustedQuestionArray.length) {
+                        iter = 0;
+                        do {
+                            adjustedQuestionArray = questions.filter(q => q.difficulty === 5 + iter);
+                            iter++;
+                        } while (!adjustedQuestionArray.length && iter < 6)
+                    }
+
                     res.json(adjustedQuestionArray[0]._id);
                 }
-                
-            }
-        } else {
+            }).catch(err => res.status(400).json("Cant find remaining quesitons! Err: " + err));
+        }).catch(err => res.status(400).json("Cant find current quesiton! Err: " + err));
+    } else {
+        Question.find().where('_id').in(req.body.questionArrayRemaining).exec().then(questions => {
             let iter = 0;
-            do{
+            let adjustedQuestionArray;
+            do {
                 adjustedQuestionArray = questions.filter(q => q.difficulty === 5 - iter);
                 iter++;
-            }while(!adjustedQuestionArray.length && iter < 5)
+            } while (!adjustedQuestionArray.length && iter < 5)
 
-            if(!adjustedQuestionArray.length){
+            if (!adjustedQuestionArray.length) {
                 iter = 0;
-                do{
+                do {
                     adjustedQuestionArray = questions.filter(q => q.difficulty === 5 + iter);
                     iter++;
-                }while(!adjustedQuestionArray.length && iter < 6)
+                } while (!adjustedQuestionArray.length && iter < 6)
             }
-            
+
             res.json(adjustedQuestionArray[0]._id);
-        }
-    }).catch(err => res.status(400).json("Cant find remaining quesitons! Err: "+err));
+        }).catch(err => res.status(400).json("First Quesiton issue! Err: "+err));
+    }
 })
 
 export default router;
